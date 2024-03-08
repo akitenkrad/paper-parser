@@ -1,0 +1,23 @@
+attrdict @ git+https://github.com/akitenkrad/attrdict
+black
+flake8
+mypy
+isort
+colorama
+gensim
+nltk
+numpy
+ipython
+pandas
+plotly
+progressbar
+py-cpuinfo
+pytest
+python-dateutil
+python-dotenv
+requests
+scikit-learn
+scipy
+toml
+tqdm
+unstructured[pdf,md]
