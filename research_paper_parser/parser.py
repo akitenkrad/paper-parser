@@ -1,5 +1,7 @@
 import re
 import urllib
+from logging import Logger
+from typing import Optional
 
 import numpy as np
 from unstructured.partition.pdf import partition_pdf
@@ -206,16 +208,23 @@ def adjust_width(elements: list[Element], text_area: Coordinates) -> list[Elemen
             e.coordinates.bottom_right.x = text_area.bottom_right.x - 10
 
 
-def parse(url: str) -> dict:
+def parse(url: str, logger: Optional[Logger] = None) -> dict:
     data = urllib.request.urlopen(url).read()
     with open("/tmp/paper.pdf", mode="wb") as f:
         f.write(data)
     partitions = partition_pdf(filename="/tmp/paper.pdf", strategy="hi_res")
 
+    if logger:
+        logger.info(f"Number of partitions: {len(partitions)}")
+
     elements = [Element.from_dict(partition.to_dict()) for partition in partitions]
     text_area = get_text_area(elements)
     adjust_width(elements, text_area)
     elements = sort_elements(elements)
+
+    if logger:
+        logger.info("Number of pages: " + str(max([element.page_number for element in elements])))
+        logger.info("Number of elements: " + str(len(elements)))
 
     text_types = [
         ElementType.Title,
@@ -237,17 +246,23 @@ def parse(url: str) -> dict:
         ):
             text_elements.append(element)
 
-    current_section = "INITIAL"
+    if logger:
+        logger.info("Number of text elements: " + str(len(text_elements)))
+
+    current_section = "Abstract"
     texts = {current_section: ""}
     for element in text_elements:
         if element.type == ElementType.Title:
-            print(element.text)
+
+            if logger:
+                logger.info(f"Processing: {element.text}")
+
             if "abstract" in element.text.lower():
                 current_section = "Abstract"
                 texts[current_section] = ""
                 continue
             if "introduction" in element.text.lower():
-                current_section = "Introduction"
+                current_section = element.text
                 texts[current_section] = ""
                 continue
             header_type = get_header_type(element)
