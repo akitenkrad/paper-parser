@@ -272,9 +272,12 @@ def parse(url: str, logger: Optional[Logger] = None) -> dict:
                 continue
         texts[current_section] += element.text.strip() + " "
 
-    for k, v in texts.items():
+    text_keys = list(texts.keys())
+    for k in text_keys:
+        v = texts[k]
         if len(v) == 0:
             del texts[k]
-        texts[k] = v.strip()
+        else:
+            texts[k] = v.strip()
 
     return texts
