@@ -208,11 +208,83 @@ def adjust_width(elements: list[Element], text_area: Coordinates) -> list[Elemen
             e.coordinates.bottom_right.x = text_area.bottom_right.x - 10
 
 
-def parse(url: str, logger: Optional[Logger] = None) -> dict:
+def parse_from_url(url: str, logger: Optional[Logger] = None) -> dict:
     data = urllib.request.urlopen(url).read()
     with open("/tmp/paper.pdf", mode="wb") as f:
         f.write(data)
     partitions = partition_pdf(filename="/tmp/paper.pdf", strategy="hi_res")
+
+    if logger:
+        logger.info(f"Number of partitions: {len(partitions)}")
+
+    elements = [Element.from_dict(partition.to_dict()) for partition in partitions]
+    text_area = get_text_area(elements)
+    adjust_width(elements, text_area)
+    elements = sort_elements(elements)
+
+    if logger:
+        logger.info("Number of pages: " + str(max([element.page_number for element in elements])))
+        logger.info("Number of elements: " + str(len(elements)))
+
+    text_types = [
+        ElementType.Title,
+        ElementType.NarrativeText,
+        ElementType.ListItem,
+    ]
+
+    text_elements = []
+    for element in elements:
+        if is_reference_section(element):
+            break
+        if (
+            element.type in text_types
+            and is_in_text_area(element, text_area)
+            and not is_figure_caption(element, elements)
+            and not is_table_caption(element, elements)
+            and not is_part_of_table(element, elements)
+            and not (element.type == ElementType.Title and not is_title(element, elements))
+        ):
+            text_elements.append(element)
+
+    if logger:
+        logger.info("Number of text elements: " + str(len(text_elements)))
+
+    current_section = "Abstract"
+    texts = {current_section: ""}
+    for element in text_elements:
+        if element.type == ElementType.Title:
+
+            if logger:
+                logger.info(f"Processing: {element.text}")
+
+            if "abstract" in element.text.lower():
+                current_section = "Abstract"
+                texts[current_section] = ""
+                continue
+            if "introduction" in element.text.lower():
+                current_section = element.text
+                texts[current_section] = ""
+                continue
+            header_type = get_header_type(element)
+            if header_type in [HeaderType.FirstHeader, HeaderType.AppendixHeader]:
+                current_section = element.text.strip()
+                texts[current_section] = ""
+                continue
+        texts[current_section] += element.text.strip() + " "
+
+    text_keys = list(texts.keys())
+    for k in text_keys:
+        v = texts[k]
+        if len(v) == 0:
+            del texts[k]
+        else:
+            texts[k] = v.strip()
+
+    return texts
+
+
+def parse_from_file(pdf_path: str, logger: Optional[Logger] = None) -> dict:
+    partitions = partition_pdf(filename=pdf_path, strategy="hi_res")
 
     if logger:
         logger.info(f"Number of partitions: {len(partitions)}")
