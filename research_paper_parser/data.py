@@ -141,10 +141,10 @@ class Element(object):
             ),
             layout_width=meta["coordinates"]["layout_width"],
             layout_height=meta["coordinates"]["layout_height"],
-            languages=meta["languages"],
-            file_directory=meta["file_directory"],
-            filename=meta["filename"],
-            filetype=meta["filetype"],
+            languages=meta.get("languages", ""),
+            file_directory=meta.get("file_directory", ""),
+            filename=meta.get("filename", ""),
+            filetype=meta.get("filetype", ""),
         )
 
     def __lt__(self, other: object) -> bool:
