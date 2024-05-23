@@ -125,47 +125,41 @@ def get_text_area(elements: list[Element]) -> Coordinates:
 
     top = [list() for _ in range(page_count)]
     for page in range(1, page_count + 1):
-        top[page - 1].append(
-            [
-                element.coordinates.top_left.y
-                for element in elements
-                if element.page_number == page and element.coordinates.top_left.y > 0 and element.type in target_types
-            ]
-        )
-    top = [np.min(values) for values in top]
+        top[page - 1] = [
+            element.coordinates.top_left.y
+            for element in elements
+            if element.page_number == page and element.coordinates.top_left.y > 0 and element.type in target_types
+        ]
+    top = [np.min(values) if len(values) > 0 else 0 for values in top]
 
     left = [list() for _ in range(page_count)]
     for page in range(1, page_count + 1):
-        left[page - 1].append(
-            [
-                element.coordinates.top_left.x
-                for element in elements
-                if element.page_number == page and element.coordinates.top_left.x > 0 and element.type in target_types
-            ]
-        )
-    left = [np.min(values) for values in left]
+        left[page - 1] = [
+            element.coordinates.top_left.x
+            for element in elements
+            if element.page_number == page and element.coordinates.top_left.x > 0 and element.type in target_types
+        ]
+    left = [np.min(values) if len(values) > 0 else 0 for values in left]
 
     right = [list() for _ in range(page_count)]
     for page in range(1, page_count + 1):
-        right[page - 1].append(
-            [
-                element.coordinates.top_right.x
-                for element in elements
-                if element.page_number == page and element.type in target_types
-            ]
-        )
-    right = [np.max(values) for values in right]
+        right[page - 1] = [
+            element.coordinates.top_right.x
+            for element in elements
+            if element.page_number == page and element.type in target_types
+        ]
+    right_max = np.max([np.max(v) for v in right if len(v) > 0])
+    right = [np.max(values) if len(values) > 0 else right_max for values in right]
 
     bottom = [list() for _ in range(page_count)]
     for page in range(1, page_count + 1):
-        bottom[page - 1].append(
-            [
-                element.coordinates.bottom_left.y
-                for element in elements
-                if element.page_number == page and element.type in target_types
-            ]
-        )
-    bottom = [np.max(values) for values in bottom]
+        bottom[page - 1] = [
+            element.coordinates.bottom_left.y
+            for element in elements
+            if element.page_number == page and element.type in target_types
+        ]
+    bottom_max = np.max([np.max(v) for v in bottom if len(v) > 0])
+    bottom = [np.max(values) if len(values) > 0 else bottom_max for values in bottom]
 
     t, l, r, b = np.median(top), np.median(left), np.median(right), np.median(bottom)
     return Coordinates(Point(l, t), Point(r, t), Point(l, b), Point(r, b))
