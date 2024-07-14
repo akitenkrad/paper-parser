@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -9,7 +10,14 @@ import numpy as np
 from nltk.corpus import wordnet as wn
 
 if not (Path(nltk.downloader.Downloader().default_download_dir()) / "corpora/wordnet.zip").exists():
-    nltk.download("wordnet")
+    try:
+        nltk.download("wordnet")
+        nltk.download("punkt")
+        nltk.download("averaged_perceptron_tagger")
+    except Exception as e:
+        print(f"Failed to download wordnet corpus: {e}")
+        print("trying to download wordnet with alternative way.")
+        subprocess.run("python -m nltk.downloader wordnet punkt averaged_perceptron_tagger", shell=True, check=True)
 
 
 class ElementType(Enum):

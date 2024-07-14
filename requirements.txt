@@ -1,4 +1,3 @@
-attrdict @ git+https://github.com/akitenkrad/attrdict
 black
 flake8
 mypy

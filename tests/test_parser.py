@@ -1,4 +1,4 @@
-from research_paper_parser.parser import parse_from_url
+from paper_parser.parser import parse_from_url
 
 
 def test_parse_from_url_1():

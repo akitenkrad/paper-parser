@@ -9,7 +9,7 @@ version_range_max = max(sys.version_info[1], 10) + 1
 python_min_version = (3, 11, 0)
 
 setuptools.setup(
-    name="research_paper_parser",
+    name="paper_parser",
     version="0.0.1",
     author="akitenkrad",
     author_email="akitenkrad@gmail.com",
@@ -20,7 +20,6 @@ setuptools.setup(
     + ["Programming Language :: Python :: 3.{}".format(i) for i in range(python_min_version[1], version_range_max)],
     long_description=long_description,
     install_requires=[
-        "attrdict @ git+https://github.com/akitenkrad/attrdict",
         "colorama",
         "gensim",
         "nltk",

@@ -1,4 +1,4 @@
-from research_paper_parser.data import Coordinates, Point
+from paper_parser.data import Coordinates, Point
 
 
 def test_is_intercept():

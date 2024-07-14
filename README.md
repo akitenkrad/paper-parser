@@ -1,14 +1,15 @@
-# research-paper-parser
+# paper-parser
 
 ## Usage
 
 ### Install
 ```
-pip install https://github.com/akitenkrad/research-paper-parser.git
+pip install https://github.com/akitenkrad/paper-parser.git
 ```
 
-### Extract text
+### Extract texts from a paper
 ```python
-from research_paper_parser.parser import parse
-texts = parse("<URL OF A PAPER>")
+from paper_parser import parse_from_file, parse_from_url
+texts = parse_from_file("<PATH TO A PAPER PDF>")
+# texts = parse_from_url("<URL OF THE PAPER PDF>")
 ```

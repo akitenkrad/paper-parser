@@ -6,7 +6,7 @@ from typing import Optional
 import numpy as np
 from unstructured.partition.pdf import partition_pdf
 
-from research_paper_parser.data import Coordinates, Element, ElementType, HeaderType, Point
+from paper_parser.data import Coordinates, Element, ElementType, HeaderType, Point
 
 
 def is_reference_section(element: Element) -> bool:
