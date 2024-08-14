@@ -13,11 +13,14 @@ if not (Path(nltk.downloader.Downloader().default_download_dir()) / "corpora/wor
     try:
         nltk.download("wordnet")
         nltk.download("punkt")
+        nltk.download("punkt_tab")
         nltk.download("averaged_perceptron_tagger")
     except Exception as e:
         print(f"Failed to download wordnet corpus: {e}")
         print("trying to download wordnet with alternative way.")
-        subprocess.run("python -m nltk.downloader wordnet punkt averaged_perceptron_tagger", shell=True, check=True)
+        subprocess.run(
+            "python -m nltk.downloader wordnet punkt punkt_tab averaged_perceptron_tagger", shell=True, check=True
+        )
 
 
 class ElementType(Enum):
