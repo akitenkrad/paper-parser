@@ -15,11 +15,15 @@ if not (Path(nltk.downloader.Downloader().default_download_dir()) / "corpora/wor
         nltk.download("punkt")
         nltk.download("punkt_tab")
         nltk.download("averaged_perceptron_tagger")
+        nltk.download("averaged_perceptron_tagger_eng")
     except Exception as e:
         print(f"Failed to download wordnet corpus: {e}")
         print("trying to download wordnet with alternative way.")
+        packages = ["wordnet", "punkt", "punkt_tab", "averaged_perceptron_tagger", "averaged_perceptron_tagger_eng"]
         subprocess.run(
-            "python -m nltk.downloader wordnet punkt punkt_tab averaged_perceptron_tagger", shell=True, check=True
+            f"python -m nltk.downloader {' '.join(packages)}",
+            shell=True,
+            check=True,
         )
 
 
